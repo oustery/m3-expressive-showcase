@@ -1,12 +1,16 @@
 package com.example.m3expressive
 
-import org.junit.Assert.assertEquals
+import java.io.File
+import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class ArchitectureTest {
     @Test
-    fun allFourReleaseAbisAreDocumented() {
-        val supportedAbis = listOf("arm64-v8a", "armeabi-v7a", "x86_64", "x86")
-        assertEquals(4, supportedAbis.distinct().size)
+    fun releaseBuildDefinesExactlyTheExpectedAbis() {
+        val buildScript = File("build.gradle.kts").readText()
+        listOf("armeabi-v7a", "arm64-v8a", "x86", "x86_64").forEach { abi ->
+            assertTrue("Missing ABI split: $abi", buildScript.contains("\"$abi\""))
+        }
+        assertTrue("Universal APK must stay disabled", buildScript.contains("isUniversalApk = false"))
     }
 }
