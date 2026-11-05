@@ -52,6 +52,12 @@ android {
     }
     kotlinOptions.jvmTarget = "17"
     buildFeatures.compose = true
+
+    lint {
+        // AGP 8.7 lint crashes inside this detector with the Kotlin 2 analysis API.
+        // Keep every other release lint check enabled.
+        disable += "NullSafeMutableLiveData"
+    }
 }
 
 dependencies {
