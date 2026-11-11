@@ -7,10 +7,12 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -22,11 +24,34 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
+/**
+ * Keeps showcase content at a readable measure on tablets and foldables instead of stretching
+ * paragraphs across the full window.
+ */
 @Composable
-fun ScreenIntro(eyebrow: String, title: String, description: String) {
-    Column(modifier = Modifier.padding(horizontal = 20.dp, vertical = 12.dp)) {
+fun ShowcaseScreen(content: @Composable () -> Unit) {
+    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.TopCenter) {
+        Box(Modifier.widthIn(max = 720.dp).fillMaxSize()) {
+            content()
+        }
+    }
+}
+
+/**
+ * Screen heading. It owns no horizontal padding: the surrounding list already applies the screen
+ * gutter, so adding more here would misalign the intro with the section cards below it.
+ */
+@Composable
+fun ScreenIntro(
+    eyebrow: String,
+    title: String,
+    description: String,
+    modifier: Modifier = Modifier,
+) {
+    Column(modifier.padding(vertical = 12.dp)) {
         Text(eyebrow.uppercase(), color = MaterialTheme.colorScheme.primary, style = MaterialTheme.typography.labelLarge)
         Spacer(Modifier.height(8.dp))
         Text(title, style = MaterialTheme.typography.displaySmall)
@@ -67,8 +92,8 @@ fun ShowcaseSection(
 }
 
 @Composable
-fun ColorDot(color: Color, modifier: Modifier = Modifier) {
-    Box(modifier.size(20.dp).clip(CircleShape).background(color))
+fun ColorDot(color: Color, modifier: Modifier = Modifier, size: Dp = 20.dp) {
+    Box(modifier.size(size).clip(CircleShape).background(color))
 }
 
 @Composable
