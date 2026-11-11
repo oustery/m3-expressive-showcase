@@ -13,4 +13,24 @@ class ArchitectureTest {
         }
         assertTrue("Universal APK must stay disabled", buildScript.contains("isUniversalApk = false"))
     }
+
+    /**
+     * [androidx.compose.runtime.saveable.rememberSaveable] only saves `MutableState`; the
+     * specialized holders (`mutableIntStateOf` and friends) are rejected when the activity saves
+     * its state, which crashes on rotation and process death.
+     */
+    @Test
+    fun savedStateUsesSaveableMutableState() {
+        val pattern = Regex("rememberSaveable\\s*\\{\\s*mutable(Int|Long|Float|Double)StateOf")
+        val offenders = File("src/main/java")
+            .walkTopDown()
+            .filter { it.isFile && it.extension == "kt" }
+            .filter { pattern.containsMatchIn(it.readText()) }
+            .map { it.path }
+            .toList()
+        assertTrue(
+            "Use rememberSaveable { mutableStateOf(...) } instead: $offenders",
+            offenders.isEmpty(),
+        )
+    }
 }
